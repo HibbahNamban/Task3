@@ -1,0 +1,31 @@
+# Load the required libraries
+library(ggplot2)
+
+# Step 2: Read the data from the file
+gene_info <- read.delim("Homo_sapiens.gene_info.gz", header = TRUE, sep = "\t")
+
+# Filter out rows with "|" in the chromosome column
+gene_info <- gene_info[!grepl("\\|", gene_info$chromosome), ]
+
+# Define the custom order for chromosomes
+custom_order <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "Un")
+
+# Create a new column to specify the custom order
+gene_info$chromosome_order <- factor(gene_info$chromosome, levels = custom_order)
+
+# Step 4: Count the number of genes per chromosome
+gene_counts <- table(gene_info$chromosome_order)
+
+# Create a summary data frame
+summary_data <- data.frame(chromosome = names(gene_counts), count = as.numeric(gene_counts))
+
+# Create a ggplot object and assign it to a variable
+gene_plot <- ggplot(data = summary_data, aes(x = factor(chromosome, levels = custom_order), y = count)) +
+  geom_bar(stat = "identity", fill = "#333333") +
+  labs(title = "Number of genes in each chromosome", x = "Chromosomes", y = "Gene count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))
+
+# View the graph
+print(gene_plot)
+
